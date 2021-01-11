@@ -112,7 +112,7 @@ def main():
     if not data:
         return
     (X_train, y_train, X_test, y_test, vocab) = data
-    T = 12
+    T = 80
     # a
     hypotheses, alpha_vals = run_adaboost(X_train, y_train, T)
     t_array = range(T)
