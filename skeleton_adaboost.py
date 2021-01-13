@@ -28,6 +28,7 @@ def run_adaboost(X_train, y_train, T):
     hypo_array = []
     alpha_vals = []
     for i in range(T):
+        print("##### ADABOOST RUN ITERATION t={} ######".format(i))
         ht, ht_score = compute_wl(X_train, y_train, 5000, Dt)
         et = 1 - ht_score
         wt = (1/2) * np.log((1-et)/et)
@@ -70,7 +71,7 @@ def compute_hypo_output(x, word_index, theta, lt_flag):
 
 def compute_reversed_hypo_output(x, hypo):
     ht = reverse_ht(hypo)
-    return compute_hypo_output(x, hypo[0], hypo[1], hypo[2])
+    return compute_hypo_output(x, ht[0], ht[1], ht[2])
 
 
 def compute_hypo_weighted_score(x_train, y_train, Dt, word_index, theta, lt_flag):
@@ -114,38 +115,40 @@ def main():
     (X_train, y_train, X_test, y_test, vocab) = data
     T = 80
     # a
-    hypotheses, alpha_vals = run_adaboost(X_train, y_train, T)
-    t_array = range(T)
-    t_train_err_arr = []
-    t_test_err_arr = []
-    for t in t_array:
-        t_train_err = compute_t_time_err(
-            X_train, y_train, t, hypotheses, alpha_vals)
-        t_test_err = compute_t_time_err(
-            X_test, y_test, t, hypotheses, alpha_vals)
-        t_train_err_arr.append(t_train_err)
-        t_test_err_arr.append(t_test_err)
-    plt.ylabel('train_err')
-    plt.xlabel('t')
-    plt.plot(t_array, t_train_err_arr)
-    plt.show()
-    plt.ylabel('test_err')
-    plt.xlabel('t')
-    plt.plot(t_array, t_test_err_arr)
-    plt.show()
+    # hypotheses, alpha_vals = run_adaboost(X_train, y_train, T)
+    # t_array = range(T)
+    # t_train_err_arr = []
+    # t_test_err_arr = []
+    # for t in t_array:
+    #     print("##### COMPUTE ERROR FOR t={} ######".format(t),)
+    #     t_train_err = compute_t_time_err(
+    #         X_train, y_train, t, hypotheses, alpha_vals)
+    #     t_test_err = compute_t_time_err(
+    #         X_test, y_test, t, hypotheses, alpha_vals)
+    #     t_train_err_arr.append(t_train_err)
+    #     t_test_err_arr.append(t_test_err)
+    # plt.ylabel('train_err')
+    # plt.xlabel('t')
+    # plt.plot(t_array, t_train_err_arr)
+    # plt.show()
+    # plt.ylabel('test_err')
+    # plt.xlabel('t')
+    # plt.plot(t_array, t_test_err_arr)
+    # plt.show()
 
     #b
-    T = 10
-    hypotheses, alpha_vals = run_adaboost(X_train, y_train, T)
-    for i in range(len(hypotheses)):
-        print("***** Word ******")
-        print(vocab[hypotheses[i][1]])
-        print(hypotheses[i][2])
-        print(hypotheses[i][0])
-        print("------------------------------------------")
+    
+    # T = 10
+    # hypotheses, alpha_vals = run_adaboost(X_train, y_train, T)
+    # for i in range(len(hypotheses)):
+    #     print("***** Word ******")
+    #     print(vocab[hypotheses[i][1]])
+    #     print(hypotheses[i][2])
+    #     print(hypotheses[i][0])
+    #     print("------------------------------------------")
 
 
-    #c
+    # #c
     T=80
     m = len(X_train) 
     hypotheses, alpha_vals = run_adaboost(X_train, y_train, T)
@@ -159,6 +162,7 @@ def main():
     plt.ylabel('train loss')
     plt.xlabel('t')
     plt.plot(t_array, l_array)
+    plt.show();
 
     m = len(X_test)
     l_array = []
@@ -170,6 +174,7 @@ def main():
     plt.ylabel('test loss')
     plt.xlabel('t')
     plt.plot(t_array, l_array)
+    plt.show()
     
 
         
@@ -183,7 +188,7 @@ def compute_t_time_err(x_arr, y_arr, t, hypotheses, alpha_vals):
     for i in range(len(x_arr)):
         x, y = x_arr[i], y_arr[i]
         guess_raw_val = np.array(
-            [alpha_vals[k] * compute_reversed_hypo_output(x, hypotheses[k]) for k in range(t)])
+            [alpha_vals[k] * compute_reversed_hypo_output(x, hypotheses[k]) for k in range(t+1)])
         y_guess = 1 if np.sum(guess_raw_val) >= 0 else -1
         sum_right = sum_right + 1 if (y == y_guess) else sum_right
     return sum_right/len(x_arr)
